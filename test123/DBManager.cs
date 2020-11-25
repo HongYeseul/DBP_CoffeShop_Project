@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MySql.Data.MySqlClient;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data;
-using MySql.Data.MySqlClient;
 
-namespace CoffeShopProject
+namespace test123
 {
     class DBManager
     {
@@ -22,44 +22,33 @@ namespace CoffeShopProject
             {
                 conn.Open();
                 MySqlCommand cmd = new MySqlCommand(query, conn);
+
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public MySqlDataReader Select(string query)
+        {
+            MySqlConnection conn = new MySqlConnection(connection_string);
+            conn.Open();
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            return rdr;
+        }
+
+
+        public string Login(string ID, string PW)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connection_string))
+            {
+                conn.Open();
+                string sql = String.Format("SELECT * from Users where ID = '{0}' and '{1}' = (SELECT cast(AES_DECRYPT(UNHEX(PW), 'asdf') as char(100)) " +
+                    "FROM Users where id = '{0}')",ID,PW);
                 
-
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        public void Select(string q)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connection_string))
-            {
-                conn.Open();
-                MySqlCommand cmd = new MySqlCommand(q, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                List<string> l = new List<string>();
-                while (rdr.Read())
-                {
-
-                    string str = string.Format("{0} : {1}", rdr["CoffeeMenu"].ToString(), rdr["CoffeeCost"].ToString());
-                    MessageBox.Show(str);
-                }
-                rdr.Close();
-
-                cmd.ExecuteNonQuery();
-            }
-
-        }
-
-        public string Login(string ID,string PW)
-        {
-            using (MySqlConnection conn = new MySqlConnection(connection_string))
-            {
-                conn.Open();
-                string sql = String.Format("SELECT PW FROM Users WHERE ID = '{0}'",ID);
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read(); 
-
+                rdr.Read();
                 try
                 {
                     if (PW == rdr["PW"].ToString())

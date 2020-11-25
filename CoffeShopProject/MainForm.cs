@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace CoffeShopProject
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         DBManager manager = DBManager.GetInstance();
         LoginManager LoginManager = LoginManager.GetInstance();
@@ -20,7 +20,7 @@ namespace CoffeShopProject
         int Latte = 0;
         int CafeMocha = 0;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
             InitializeDateTimePicker();
@@ -36,6 +36,9 @@ namespace CoffeShopProject
         {
             listBoxCoffeeMenu.Items.Add(String.Format(stdDetails, "커피명", "가격"));
 
+
+            string q = "SELECT CoffeeMenu FROM Coffee";
+            manager.Select(q);
             listBoxCoffeeMenu.Items.Add(String.Format(stdDetails, "아메리카노", "1000"));
             listBoxCoffeeMenu.Items.Add(String.Format(stdDetails, "라떼", "2000"));
             listBoxCoffeeMenu.Items.Add(String.Format(stdDetails, "카페모카", "3000"));
